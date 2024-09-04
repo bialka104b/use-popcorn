@@ -58,6 +58,7 @@ export default function App() {
 
   const [movies, setMovies] = useState(tempMovieData);
   const [watched, setWatched] = useState(tempWatchedData);
+  const [externalRating, setExternalRating] = useState(0)
 
   return (
     <>
@@ -80,7 +81,17 @@ export default function App() {
           </Box>
         </>
       </Main>
+      <StarsRating maxRating={2} messages={["fff", "ggg"]} />
       <StarsRating maxRating={10} />
+      <StarsRating
+        maxRating={20}
+        color="red"
+        size={25}
+        colorStroke="white"
+        defaultRating={3}
+        onSetExternalRating={setExternalRating}
+      />
+      {externalRating}
     </>
   );
 }
