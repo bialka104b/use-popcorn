@@ -1,5 +1,14 @@
 import { useState } from "react";
 import { StarsRating } from "./components/StarsRating";
+import { WatchedMoviesList } from "./components/WatchedMoviesList";
+import { MoviesList } from "./components/MoviesList";
+import { WatchedSummary } from "./components/WatchedSummary";
+import { Box } from "./components/Box";
+import { Main } from "./components/Main";
+import { NumResults } from "./components/NumResults";
+import { InputSearch } from "./components/InputSearch";
+import { Logo } from "./components/Logo";
+import { NavBar } from "./components/NavBar";
 
 const tempMovieData = [
   {
@@ -48,7 +57,7 @@ const tempWatchedData = [
   },
 ];
 
-const average = (arr) =>
+export const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
 export default function App() {
@@ -58,7 +67,7 @@ export default function App() {
 
   const [movies, setMovies] = useState(tempMovieData);
   const [watched, setWatched] = useState(tempWatchedData);
-  const [externalRating, setExternalRating] = useState(0)
+  const [externalRating, setExternalRating] = useState(0);
 
   return (
     <>
@@ -93,126 +102,5 @@ export default function App() {
       />
       {externalRating}
     </>
-  );
-}
-
-function NavBar({ children }) {
-  return (
-    <nav className="nav-bar">
-      {children}
-    </nav>
-  );
-}
-
-function Logo() {
-  return (
-    <div className="logo">
-      <span role="img">🍿</span>
-      <h1>usePopcorn</h1>
-    </div>
-  );
-}
-
-function InputSearch() {
-  const [query, setQuery] = useState("");
-  return (
-    <input
-      className="search"
-      type="text"
-      placeholder="Search movies..."
-      value={query}
-      onChange={(e) => setQuery(e.target.value)}
-    />
-  );
-}
-
-function NumResults({ movies }) {
-  return (
-    <p className="num-results">
-      Found <strong>{movies.length}</strong> results
-    </p>
-  );
-}
-
-function Main({ children }) {
-  return <main className="main">{ children }</main>;
-}
-
-function Box({ children }) {
-  const [isOpen, setIsOpen] = useState(true);
-  return (
-    <div className="box">
-      <button className="btn-toggle" onClick={() => setIsOpen((open) => !open)}>
-        {isOpen ? "–" : "+"}
-      </button>
-      {isOpen && children}
-    </div>
-  );
-}
-
-function WatchedSummary({ watched }) {
-  const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
-  const avgUserRating = average(watched.map((movie) => movie.userRating));
-  const avgRuntime = average(watched.map((movie) => movie.runtime));
-
-  return (
-    <div className="summary">
-      <h2>Movies you watched</h2>
-      <div>
-        <MovieInfo emoji={"#️⃣"}>{watched.length} movies</MovieInfo>
-        <MovieInfo emoji={"⭐️"}>{avgImdbRating}</MovieInfo>
-        <MovieInfo emoji={"🌟"}>{avgUserRating}</MovieInfo>
-        <MovieInfo emoji={"⏳"}>{avgRuntime} min</MovieInfo>
-      </div>
-    </div>
-  );
-}
-
-function MoviesList({ movies }) {
-  return (
-    <ul className="list">
-      {movies?.map((movie) => (
-        <li key={movie.imdbID}>
-          <img src={movie.Poster} alt={`${movie.Title} poster`} />
-          <h3>{movie.Title}</h3>
-          <div>
-            <MovieInfo emoji={"🗓"}>{movie.Year}</MovieInfo>
-          </div>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function WatchedMoviesList({ watched }) {
-  return (
-    <ul className="list">
-      {watched.map((movie) => (
-        <WatchedMovie movie={movie} key={movie.imdbID} />
-      ))}
-    </ul>
-  );
-}
-
-function WatchedMovie({movie}) {
-  return (
-    <li>
-      <img src={movie.Poster} alt={`${movie.Title} poster`} />
-      <h3>{movie.Title}</h3>
-      <div>
-        <MovieInfo emoji={"⭐️"}>{movie.imdbRating}</MovieInfo>
-        <MovieInfo emoji={"🌟"}>{movie.userRating}</MovieInfo>
-        <MovieInfo emoji={"⏳"}>{movie.runtime} min</MovieInfo>
-      </div>
-    </li>
-  );
-}
-
-function MovieInfo({emoji, children}) {
-  return (
-    <p>
-      <span>{emoji}</span>
-      <span>{children}</span>
-    </p>
   );
 }
