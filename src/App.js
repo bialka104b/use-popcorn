@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StarsRating } from "./components/StarsRating";
 import { WatchedMoviesList } from "./components/WatchedMoviesList";
 import { MoviesList } from "./components/MoviesList";
@@ -60,14 +60,55 @@ const tempWatchedData = [
 export const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
+const MY_KEY = "1ac9e4cb";
+const selectedId = "tt3896198";
+
 export default function App() {
   // API KEY 8258bc4014fe46388c288dbe64bc5aee
   // https://newsapi.org/
   // https://newsapi.org/docs/get-started
 
+  // http://www.omdbapi.com/?i=tt3896198&apikey=1ac9e4cb
+
   const [movies, setMovies] = useState(tempMovieData);
   const [watched, setWatched] = useState(tempWatchedData);
   const [externalRating, setExternalRating] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    async function getMovieAPI() {
+      try {
+        setIsLoading(true);
+        setErrorMessage("");
+
+        const response = await fetch(
+          `http://www.omdbapi.com/?apikey=${MY_KEY}&i=${selectedId}&s=interstellar
+    `
+          // ,
+          // { signal: controller.signal }
+        );
+
+        if (!response.ok)
+          throw new Error("Something went wrong with fetching movies");
+
+        const data = await response.json();
+        if (data.Response === "False") throw new Error("Movie not found");
+
+        setMovies(data.Search);
+        setErrorMessage("");
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          console.log(error.message);
+        }
+        setErrorMessage(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    getMovieAPI();
+    return () => console.log("odmontuj");
+  }, []);
 
   return (
     <>
@@ -79,7 +120,9 @@ export default function App() {
       <Main>
         <>
           <Box>
-            <MoviesList movies={movies} />
+            {isLoading && <Loader />}
+            {!isLoading && !errorMessage && <MoviesList movies={movies} />}
+            {errorMessage && <ErrorMessage />}
           </Box>
 
           <Box>
@@ -103,4 +146,11 @@ export default function App() {
       {externalRating}
     </>
   );
+}
+
+function Loader() {
+  return <div className="loader">Loader</div>;
+}
+function ErrorMessage() {
+  return <div className="error">Error</div>;
 }
