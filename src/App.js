@@ -70,11 +70,13 @@ export default function App() {
 
   // http://www.omdbapi.com/?i=tt3896198&apikey=1ac9e4cb
 
-  const [movies, setMovies] = useState(tempMovieData);
-  const [watched, setWatched] = useState(tempWatchedData);
+  const [errorMessage, setErrorMessage] = useState("");
   const [externalRating, setExternalRating] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [movies, setMovies] = useState(tempMovieData);
+  const [query, setQuery] = useState("interstellar");
+  const [watched, setWatched] = useState(tempWatchedData);
+  const tempQuery = "interstellar";
 
   useEffect(() => {
     async function getMovieAPI() {
@@ -83,8 +85,8 @@ export default function App() {
         setErrorMessage("");
 
         const response = await fetch(
-          `http://www.omdbapi.com/?apikey=${MY_KEY}&i=${selectedId}&s=interstellar
-    `
+          `http://www.omdbapi.com/?apikey=${MY_KEY}&i=${selectedId}&s=${query}
+      `
           // ,
           // { signal: controller.signal }
         );
@@ -106,15 +108,20 @@ export default function App() {
         setIsLoading(false);
       }
     }
+
+    if (query.length < 3) {
+      setMovies([]);
+      setErrorMessage("");
+      return;
+    }
     getMovieAPI();
-    return () => console.log("odmontuj");
-  }, []);
+  }, [query]);
 
   return (
     <>
       <NavBar>
         <Logo />
-        <InputSearch />
+        <InputSearch query={query} setQuery={setQuery} />
         <NumResults movies={movies} />
       </NavBar>
       <Main>
