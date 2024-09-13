@@ -76,6 +76,7 @@ export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
   const [query, setQuery] = useState("interstellar");
   const [watched, setWatched] = useState(tempWatchedData);
+  const [selectedId, setSelectedId] = useState("null");
   const tempQuery = "interstellar";
 
   useEffect(() => {
